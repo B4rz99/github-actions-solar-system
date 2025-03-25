@@ -8,9 +8,9 @@ on:
       - workflows
 
 env:
-  MONGO_URI: ${{ secrets.MONGODB_URI }}
-  MONGO_USERNAME: ${{ secrets.MONGODB_USERNAME }}
-  MONGO_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+  MONGO_URI: ${{ secrets.MONGO_URI }}
+  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
     
 jobs:
     unit-testing:
