@@ -24,12 +24,12 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: 22
-        
-        - name: Update Mongoose
-          run: npm install mongoose@latest
     
         - name: Install Dependencies
           run: npm install
+
+        - name: Update Mongoose
+          run: npm install mongoose@latest
     
         - name: Unit Testing
           run: npm test
