@@ -3,30 +3,31 @@ const express = require('express');
 const OS = require('os');
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
+const cors = require('cors');
+
 const app = express();
-const cors = require('cors')
 
-
+// Middleware
 app.use(bodyParser.json());
+app.use(cors());
 app.use(express.static(path.join(__dirname, '/')));
-app.use(cors())
 
+// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
     user: process.env.MONGO_USERNAME,
     pass: process.env.MONGO_PASSWORD,
     useNewUrlParser: true,
     useUnifiedTopology: true
-}, function(err) {
-    if (err) {
-        console.log("error!! " + err)
-    } else {
-      //  console.log("MongoDB Connection Successful")
-    }
-})
+}).then(() => {
+    console.log("MongoDB connected successfully ✔️");
+}).catch(err => {
+    console.error("MongoDB connection error ❌", err.message);
+});
 
-var Schema = mongoose.Schema;
+// Schema & Model
+const Schema = mongoose.Schema;
 
-var dataSchema = new Schema({
+const dataSchema = new Schema({
     name: String,
     id: Number,
     description: String,
@@ -34,55 +35,53 @@ var dataSchema = new Schema({
     velocity: String,
     distance: String
 });
-var planetModel = mongoose.model('planets', dataSchema);
 
+const planetModel = mongoose.model('planets', dataSchema);
 
+// Routes
 
-app.post('/planet', async function(req, res) {
+app.post('/planet', async (req, res) => {
     try {
-        const planetData = await planetModel.findOne({ id: req.body.id });
-
-        if (!planetData) {
-            return res.status(404).send("Planet not found. Try 0 - 9.");
+        const id = parseInt(req.body.id);
+        if (isNaN(id) || id < 0 || id > 9) {
+            return res.status(400).send("Invalid planet ID. Select a number from 0 to 9.");
         }
 
-        res.send(planetData);
+        const planetData = await planetModel.findOne({ id: id });
+
+        if (!planetData) {
+            return res.status(404).send("Planet not found.");
+        }
+
+        res.json(planetData);
     } catch (err) {
         console.error("Error finding planet:", err.message);
         res.status(500).send("Error in Planet Data");
     }
 });
 
-app.get('/',   async (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/', 'index.html'));
 });
 
-
-app.get('/os',   function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send({
-        "os": OS.hostname(),
-        "env": process.env.NODE_ENV
+app.get('/os', (req, res) => {
+    res.json({
+        os: OS.hostname(),
+        env: process.env.NODE_ENV || 'development'
     });
-})
+});
 
-app.get('/live',   function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send({
-        "status": "live"
-    });
-})
+app.get('/live', (req, res) => {
+    res.json({ status: 'live' });
+});
 
-app.get('/ready',   function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send({
-        "status": "ready"
-    });
-})
+app.get('/ready', (req, res) => {
+    res.json({ status: 'ready' });
+});
 
-app.listen(3000, () => {
-    console.log("Server successfully running on port - " +3000);
-})
-
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
 
 module.exports = app;
