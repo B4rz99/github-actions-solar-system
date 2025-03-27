@@ -15,14 +15,13 @@ app.use(express.static(path.join(__dirname, '/')));
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
     user: process.env.MONGO_USERNAME,
-    pass: process.env.MONGO_PASSWORD,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    pass: process.env.MONGO_PASSWORD
 }).then(() => {
     console.log("MongoDB connected successfully ✔️");
 }).catch(err => {
     console.error("MongoDB connection error ❌", err.message);
 });
+
 
 // Schema & Model
 const Schema = mongoose.Schema;
