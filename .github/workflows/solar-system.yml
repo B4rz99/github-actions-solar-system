@@ -172,17 +172,18 @@ jobs:
       - name: Install Kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: v1.26.0
+          version: v1.28.1
 
       - name: Set Kubeconfig
         uses: azure/k8s-set-context@v4
         with:
           method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}   
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          context: default   
 
       - name: Fetch Kubernetes Cluster Details
         run: |
-          kubectl version --short
+          kubectl version --client
           kubectl config get-contexts
           echo ---------------------------------------
           kubectl get nodes
