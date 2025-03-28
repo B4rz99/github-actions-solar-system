@@ -1,8 +1,10 @@
 name: Solar System Workflow
 
 on: 
-  release:
-    types: published
+  push:
+    branches:
+      - main
+      - workflows
 
 env:
   MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -12,6 +14,15 @@ env:
 jobs:
     unit-testing:
         name: Unit Testing
+        services:
+          mongo:
+            image: mongo
+            ports:
+              - 27017:27017
+        env:
+          MONGO_URI: 'mongodb://localhost:27017/'
+          MONGO_USERNAME: user-test
+          MONGO_PASSWORD: password-test
         strategy:
           matrix:
             node-version: [18]
@@ -28,7 +39,7 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: ${{ matrix.node-version }}
-            registry-url: 'https://npm.pkg.github.com'
+            #registry-url: 'https://npm.pkg.github.com'
 
         - name: Cache NPM Dependencies
           uses: actions/cache@v3
@@ -53,10 +64,10 @@ jobs:
             name: Mocha-Test-Result-${{ matrix.node-version }}-${{ matrix.os }}
             path: test-results.xml
 
-        - name: Publish to GitHub Repository
-          run: npm publish
-          env:
-            NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        #- name: Publish to GitHub Repository
+        #  run: npm publish
+        #  env:
+        #    NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     code-coverage:
         name: Code Coverage
