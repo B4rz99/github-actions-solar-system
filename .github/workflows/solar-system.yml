@@ -16,13 +16,13 @@ jobs:
         name: Unit Testing
         services:
           mongo:
-            image: siddhart67/mongo-db:non-prod
+            image: mongo
             ports:
               - 27017:27017
         env:
-          MONGO_URI: 'mongodb://localhost:27017/superData'
-          MONGO_USERNAME: non-prod-user
-          MONGO_PASSWORD: non-prod-password
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
         strategy:
           matrix:
             node-version: [18]
@@ -39,7 +39,7 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: ${{ matrix.node-version }}
-            #registry-url: 'https://npm.pkg.github.com'
+            # registry-url: 'https://npm.pkg.github.com'
 
         - name: Cache NPM Dependencies
           uses: actions/cache@v3
@@ -64,22 +64,33 @@ jobs:
             name: Mocha-Test-Result-${{ matrix.node-version }}-${{ matrix.os }}
             path: test-results.xml
 
-        #- name: Publish to GitHub Repository
-        #  run: npm publish
-        #  env:
-        #    NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        # - name: Publish to GitHub Repository
+        #   run: npm publish
+        #   env:
+        #     NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     code-coverage:
         name: Code Coverage
+        container:
+          image: node:18
+        services:
+          mongo:
+            image: mongo
+            options:
+              --name github
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}  
         runs-on: ubuntu-latest
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v4
 
-        - name: Setup NodeJS Version - 22
-          uses: actions/setup-node@v3
-          with:
-            node-version: 22
+        # - name: Setup NodeJS Version - 18
+        #   uses: actions/setup-node@v3
+        #   with:
+        #     node-version: 18
 
         - name: Install Dependencies
           run: npm install
