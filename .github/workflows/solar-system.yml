@@ -165,7 +165,6 @@ jobs:
     dev-deploy:
       needs: docker
       runs-on: ubuntu-latest
-      environment: Development
       steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -179,18 +178,7 @@ jobs:
         uses: azure/k8s-set-context@v4
         with:
           method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-
-      # - name: Debug Kubernetes Connection
-      #   run: |
-      #     echo "Checking KUBECONFIG..."
-      #     ls -la $HOME/.kube/
-      #     cat $HOME/.kube/config || echo "No kubeconfig found!"
-      #     echo "Checking kubectl context..."
-      #     kubectl config current-context || echo "No current context!"
-      #     echo "Checking available contexts..."
-      #     kubectl config get-contexts || echo "No contexts found!"
-        
+          kubeconfig: ${{ secrets.KUBECONFIG }}   
 
       - name: Fetch Kubernetes Cluster Details
         run: |
