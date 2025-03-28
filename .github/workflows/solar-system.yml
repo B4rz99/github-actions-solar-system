@@ -162,48 +162,48 @@ jobs:
             ghcr.io/b4rz99/solar-system:${{ github.sha }}
             ${{ secrets.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
 
-    # dev-deploy:
-    #   needs: docker
-    #   runs-on: ubuntu-latest
-    #   environment: Development
-    #   steps:
-    #   - name: Checkout Repository
-    #     uses: actions/checkout@v4
-# 
-    #   - name: Install Kubectl
-    #     uses: azure/setup-kubectl@v3
-    #     with:
-    #       version: v1.28.1
-# 
-    #   - name: Set Kubeconfig
-    #     uses: azure/k8s-set-context@v3
-    #     with:
-    #       method: kubeconfig
-    #       kubeconfig: ${{ secrets.KUBECONFIG }}
-    #     
-# 
-    #   - name: Fetch Kubernetes Cluster Details
-    #     run: |
-    #       kubectl version --short
-    #       echo ---------------------------------------
-    #       kubectl get nodes
-# 
-    #   - name: Save Nginx Ingress Controller IP as a GitHub Variable
-    #     run: |
-    #       echo "INGRESS_IP=$(kubectl get svc -n ingress-nginx ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" >> $GITHUB_ENV
-# 
-    #   - name: Replace Token in Manifest files
-    #     uses: cschleiden/replace-tokens@v1
-    #     with:
-    #       tokenPrefix: "_{_"
-    #       tokenSuffix: "_}_"
-    #       files: '["kubernetes/development/*.yaml"]'
-    #     env:
-    #       NAMESPACE: ${{ vars.NAMESPACE }}
-    #       REPLICAS: ${{ vars.REPLICAS }}
-    #       IMAGE: ${{ secrets.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
-    #       INGRESS_IP: ${{ env.INGRESS_IP }}
-# 
-    #   - name: Check Kubernetes Files
-    #     run: |
-    #       cat kubernetes/development/*.yaml
+    dev-deploy:
+      needs: docker
+      runs-on: ubuntu-latest
+      environment: Development
+      steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.28.1
+
+      - name: Set Kubeconfig
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+        
+
+      - name: Fetch Kubernetes Cluster Details
+        run: |
+          kubectl version --short
+          echo ---------------------------------------
+          kubectl get nodes
+
+      - name: Save Nginx Ingress Controller IP as a GitHub Variable
+        run: |
+          echo "INGRESS_IP=$(kubectl get svc -n ingress-nginx ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" >> $GITHUB_ENV
+
+      - name: Replace Token in Manifest files
+        uses: cschleiden/replace-tokens@v1
+        with:
+          tokenPrefix: "_{_"
+          tokenSuffix: "_}_"
+          files: '["kubernetes/development/*.yaml"]'
+        env:
+          NAMESPACE: ${{ vars.NAMESPACE }}
+          REPLICAS: ${{ vars.REPLICAS }}
+          IMAGE: ${{ secrets.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
+          INGRESS_IP: ${{ env.INGRESS_IP }}
+
+      - name: Check Kubernetes Files
+        run: |
+          cat kubernetes/development/*.yaml
