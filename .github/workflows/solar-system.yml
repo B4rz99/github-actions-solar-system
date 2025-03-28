@@ -186,9 +186,10 @@ jobs:
         run: |
           kubectl version --client
           echo ---------------------------------------
-          kubectl get nodes
           kubectl config current-context
           kubectl config get-contexts
+          kubectl get nodes
+          
 
       - name: Save Nginx Ingress Controller IP as a GitHub Variable
         run: |
