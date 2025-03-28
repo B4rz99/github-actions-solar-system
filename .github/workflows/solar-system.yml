@@ -1,11 +1,8 @@
 name: Solar System Workflow
 
 on: 
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-      - workflows
+  release:
+    types: published
 
 env:
   MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -20,6 +17,9 @@ jobs:
             node-version: [18]
             os: [ubuntu-latest]
         runs-on: ${{ matrix.os }}
+        permissions:
+          packages: write
+          contents: read
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v4
@@ -28,6 +28,7 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: ${{ matrix.node-version }}
+            registry-url: 'https://npm.pkg.github.com'
 
         - name: Cache NPM Dependencies
           uses: actions/cache@v3
@@ -51,6 +52,11 @@ jobs:
           with:
             name: Mocha-Test-Result-${{ matrix.node-version }}-${{ matrix.os }}
             path: test-results.xml
+
+        - name: Publish to GitHub Repository
+          run: npm publish
+          env:
+            NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     code-coverage:
         name: Code Coverage
