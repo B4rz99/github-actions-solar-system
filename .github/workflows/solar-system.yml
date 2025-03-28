@@ -176,18 +176,21 @@ jobs:
           version: v1.28.1
 
       - name: Set Kubeconfig
-        uses: azure/k8s-set-context@v3
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          export KUBECONFIG=$HOME/.kube/config
+          kubectl cluster-info
         
 
       - name: Fetch Kubernetes Cluster Details
         run: |
           kubectl version --client
-          echo ---------------------------------------
+          echo -----------------------------------------------------------------------
           kubectl config current-context
+          echo -----------------------------------------------------------------------
           kubectl config get-contexts
+          echo -----------------------------------------------------------------------
           kubectl get nodes
           
 
