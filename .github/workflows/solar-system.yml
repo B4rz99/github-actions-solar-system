@@ -125,12 +125,11 @@ jobs:
           echo Testing image URL using wget
           wget -q -O - 127.0.0.1:3000/live | grep live
 
-          - name: Container Registry Push
-          uses: docker/build-push-action@v4
-          with:
-            context: .
-            push: true
-            tags: |
-              ghcr.io/b4rz99/solar-system:${{ github.sha }}
-              ${{ secrets.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
-        
+      - name: Container Registry Push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: | 
+            ghcr.io/${{ github.actor.toLower }}/solar-system:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
