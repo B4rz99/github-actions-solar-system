@@ -176,25 +176,26 @@ jobs:
           version: v1.26.0
 
       - name: Set Kubeconfig
-        uses: azure/k8s-set-context@v3
+        uses: azure/k8s-set-context@v4
         with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
 
-      - name: Debug Kubernetes Connection
-        run: |
-          echo "Checking KUBECONFIG..."
-          ls -la $HOME/.kube/
-          cat $HOME/.kube/config || echo "No kubeconfig found!"
-          echo "Checking kubectl context..."
-          kubectl config current-context || echo "No current context!"
-          echo "Checking available contexts..."
-          kubectl config get-contexts || echo "No contexts found!"
+      # - name: Debug Kubernetes Connection
+      #   run: |
+      #     echo "Checking KUBECONFIG..."
+      #     ls -la $HOME/.kube/
+      #     cat $HOME/.kube/config || echo "No kubeconfig found!"
+      #     echo "Checking kubectl context..."
+      #     kubectl config current-context || echo "No current context!"
+      #     echo "Checking available contexts..."
+      #     kubectl config get-contexts || echo "No contexts found!"
         
 
       - name: Fetch Kubernetes Cluster Details
         run: |
           kubectl version --client
+          kubectl config get-contexts
           echo ---------------------------------------
           kubectl get nodes
           
