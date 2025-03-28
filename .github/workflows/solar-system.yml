@@ -173,25 +173,29 @@ jobs:
       - name: Install Kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: v1.28.1
+          version: v1.26.0
 
       - name: Set Kubeconfig
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Debug Kubernetes Connection
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-          export KUBECONFIG=$HOME/.kube/config
-          kubectl cluster-info
+          echo "Checking KUBECONFIG..."
+          ls -la $HOME/.kube/
+          cat $HOME/.kube/config || echo "No kubeconfig found!"
+          echo "Checking kubectl context..."
+          kubectl config current-context || echo "No current context!"
+          echo "Checking available contexts..."
+          kubectl config get-contexts || echo "No contexts found!"
         
 
       - name: Fetch Kubernetes Cluster Details
         run: |
           kubectl version --client
-          echo -----------------------------------------------------------------------
-          kubectl config current-context
-          echo -----------------------------------------------------------------------
-          kubectl config get-contexts
-          echo -----------------------------------------------------------------------
+          echo ---------------------------------------
           kubectl get nodes
           
 
