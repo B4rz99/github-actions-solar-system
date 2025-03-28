@@ -131,5 +131,5 @@ jobs:
           context: .
           push: true
           tags: | 
-            ghcr.io/${{ github.actor.toLower }}/solar-system:${{ github.sha }}
+            ghcr.io/b4rz99/solar-system:${{ github.sha }}
             ${{ secrets.DOCKER_USERNAME }}/solar-system:${{ github.sha }}
