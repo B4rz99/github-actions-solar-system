@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/workflow
+      - workflows
 
 env:
   MONGO_URI: ${{ secrets.MONGO_URI }}
