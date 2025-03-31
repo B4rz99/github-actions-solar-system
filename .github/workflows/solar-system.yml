@@ -164,6 +164,7 @@ jobs:
 
     dev-deploy:
       needs: docker
+      environment: development
       runs-on: ubuntu-latest
       steps:
       - name: Checkout Repository
